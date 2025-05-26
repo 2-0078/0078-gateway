@@ -43,9 +43,16 @@ spring:
           filters:
             - StripPrefix=1
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs  # API 문서 경로
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui/index.html
+
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${EUREKA_HOST}:8761/eureka/

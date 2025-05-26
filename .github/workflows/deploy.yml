@@ -1,0 +1,49 @@
+name: Deploy Gateway
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Save PEM
+        run: |
+          echo "${{ secrets.EC2_PEM_KEY }}" > gateway-key.pem
+          chmod 400 gateway-key.pem
+
+      - name: Copy files to EC2
+        run: |
+          ssh -i gateway-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "mkdir -p gateway"
+          
+          scp -i gateway-key.pem -o StrictHostKeyChecking=no \
+          build/libs/*.jar \
+          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/gateway/gateway.jar
+          
+          scp -i gateway-key.pem -o StrictHostKeyChecking=no \
+          Dockerfile docker-compose.yml .env \
+          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/gateway/
+
+      - name: Remote Deploy
+        run: |
+          ssh -i gateway-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd gateway
+            docker compose down
+            docker compose build
+            docker compose up -d
+          EOF
