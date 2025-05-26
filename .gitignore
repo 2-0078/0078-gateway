@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### .env ###
+.env
+
+### 무시하면 안되는 파일 ###
+!.github/workflows/deploy.yml
