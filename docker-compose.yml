@@ -2,9 +2,7 @@ version: "3.8"
 
 services:
   gateway:
-    container_name: gateway
-    build:
-      context: .
+    image: eunseo0305/gateway:latest
     ports:
       - "8000:8000"
     env_file:
