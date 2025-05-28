@@ -39,11 +39,23 @@ jobs:
           Dockerfile docker-compose.yml .env \
           ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/gateway/
 
-      - name: Remote Deploy
+      - name: Remote Deploy with .env
         run: |
           ssh -i gateway-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd gateway
+
+            echo "[🔍 .env 파일 내용 확인]"
+            cat .env
+
+            echo "[🔍 Docker Compose 설정 확인]"
+            docker compose config
+
+            echo "[🧹 종료 중...]"
             docker compose down
+
+            echo "[⚙️ 빌드 중...]"
             docker compose build
+
+            echo "[🚀 컨테이너 시작 중...]"
             docker compose up -d
           EOF
