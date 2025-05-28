@@ -1,9 +1,7 @@
 FROM openjdk:17-jdk-alpine
 
-ARG JAR_FILE=gateway.jar
-COPY ${JAR_FILE} app.jar
+COPY build/libs/*.jar app.jar
 
 COPY .env .env
-RUN export $(cat .env | xargs)
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]
