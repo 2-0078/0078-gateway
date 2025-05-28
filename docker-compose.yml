@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   gateway:
+    container_name: gateway_service
     image: eunseo0305/gateway:latest
     ports:
       - "8000:8000"
