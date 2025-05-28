@@ -19,6 +19,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
+      - name: Build Spring Boot App
+        run: ./gradlew clean build
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
