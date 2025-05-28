@@ -43,6 +43,80 @@ spring:
           filters:
             - StripPrefix=1
 
+        - id: board-service
+          uri: lb://BOARD-SERVICE
+          predicates:
+            - Path=/board-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: admin-service
+          uri: lb://ADMIN-SERVICE
+          predicates:
+            - Path=/admin-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: batch-service
+          uri: lb://BATCH-SERVICE
+          predicates:
+            - Path=/batch-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: asset-service
+          uri: lb://ASSET-SERVICE
+          predicates:
+            - Path=/asset-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: auction-service
+          uri: lb://AUCTION-SERVICE
+          predicates:
+            - Path=/auction-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: piece-service
+          uri: lb://PIECE-SERVICE
+          predicates:
+            - Path=/piece-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: funding-service
+          uri: lb://FUNDING-SERVICE
+          predicates:
+            - Path=/funding-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: alert-service
+          uri: lb://ALERT-SERVICE
+          predicates:
+            - Path=/alert-service/**
+          filters:
+            - StripPrefix=1
+
+      discovery:
+        locator:
+          enabled: true
+
 springdoc:
   api-docs:
     path: /v3/api-docs  # API 문서 경로
@@ -56,3 +130,7 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://${EUREKA_HOST}:8761/eureka/
+
+auth:
+  jwt:
+    key: 1bce3fa358ad5f5d89b2ec5d45ab89bb574244593afee33fd5d46f902bc398c4
