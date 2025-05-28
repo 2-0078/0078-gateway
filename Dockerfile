@@ -1,6 +1,6 @@
 FROM openjdk:17-jdk-alpine
 
-ARG JAR_FILE=board.jar
+ARG JAR_FILE=gateway.jar
 COPY ${JAR_FILE} app.jar
 
 COPY .env .env
