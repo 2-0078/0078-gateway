@@ -36,7 +36,6 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "SPRING_PROFILES_ACTIVE=prod" > .env
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
           echo "EUREKA_HOST=${{ secrets.EUREKA_HOST }}" >>.env
 
@@ -71,5 +70,5 @@ jobs:
           ssh -i gateway-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~/gateway
             docker compose pull
-            docker compose up -d
+            docker compose up -f docker-compose.remote.yml -d
           EOF
