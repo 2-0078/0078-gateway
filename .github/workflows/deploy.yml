@@ -49,6 +49,8 @@ jobs:
 
       - name: Copy docker-compose.yml to EC2
         run: |
+          sed "s|\${DOCKER_USERNAME}|${{ secrets.DOCKER_USERNAME }}|g" docker-compose.yml > docker-compose.remote.yml
+          
           scp -i gateway-key.pem -o StrictHostKeyChecking=no \
           docker-compose.yml \
           ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/gateway/docker-compose.yml
