@@ -38,6 +38,7 @@ jobs:
         run: |
           echo "SPRING_PROFILES_ACTIVE=prod" > .env
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
+          echo "EUREKA_HOST=${{ secrets.EUREKA_HOST }}" >>.env
 
       - name: Build and Push Docker Image to Docker Hub
         uses: docker/build-push-action@v5
@@ -71,4 +72,5 @@ jobs:
             cd ~/gateway
             docker compose pull
             docker compose up -d
+            mv docker-compose.remote.yml docker-compose.yml
           EOF
