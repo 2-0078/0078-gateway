@@ -72,5 +72,4 @@ jobs:
             cd ~/gateway
             docker compose pull
             docker compose up -d
-            mv docker-compose.remote.yml docker-compose.yml
           EOF
