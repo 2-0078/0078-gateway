@@ -70,5 +70,5 @@ jobs:
           ssh -i gateway-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~/gateway
             docker compose pull
-            docker compose up -f docker-compose.remote.yml -d
+            docker-compose up -f docker-compose.remote.yml -d
           EOF
