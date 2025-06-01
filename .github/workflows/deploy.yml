@@ -37,7 +37,7 @@ jobs:
       - name: Create .env file
         run: |
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
-          echo "EUREKA_HOST=${{ secrets.EUREKA_HOST }}" >> .env
+          echo "EUREKA_HOST=${{ secrets.EC2_HOST }}" >> .env
 
       - name: Build and Push Docker Image to Docker Hub
         uses: docker/build-push-action@v5
@@ -71,5 +71,9 @@ jobs:
             cd ~/gateway
             mv docker-compose.remote.yml docker-compose.yml
             docker compose pull
+          
+            docker compose down || true
+            docker rm -f gateway_service || true
+          
             docker compose --env-file .env up -d
           EOF
