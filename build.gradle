@@ -42,9 +42,8 @@ dependencies {
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.5'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.5'
 
-	// Swagger UI 연동 (Spring Cloud Gateway용)
-	implementation 'org.springdoc:springdoc-openapi-gateway'
-	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui'
+	// Swagger
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webflux-ui', version: '2.2.0'
 }
 
 dependencyManagement {
