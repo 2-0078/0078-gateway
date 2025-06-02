@@ -73,7 +73,7 @@ jobs:
             docker compose pull
           
             docker compose down || true
-            docker rm -f gateway_service || true
+            docker rm -f gateway || true
           
             docker compose --env-file .env up -d
           EOF
