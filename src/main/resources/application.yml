@@ -124,6 +124,12 @@ springdoc:
     enabled: true
     path: /swagger-ui/index.html
 
+    urls:
+      - url: "/product-service/v3/api-docs"
+        name: "Product Service API"
+      - url: "/board-service/v3/api-docs"
+        name: "Board Service API"
+
 eureka:
   client:
     register-with-eureka: true
