@@ -38,6 +38,7 @@ jobs:
         run: |
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
           echo "EUREKA_HOST=${{ secrets.EC2_HOST }}" >> .env
+          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
 
       - name: Build and Push Docker Image to Docker Hub
         uses: docker/build-push-action@v5

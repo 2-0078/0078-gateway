@@ -145,6 +145,8 @@ eureka:
     service-url:
       defaultZone: http://${EUREKA_HOST}:8761/eureka/
 
-auth:
-  jwt:
-    key: 1bce3fa358ad5f5d89b2ec5d45ab89bb574244593afee33fd5d46f902bc398c4
+JWT:
+  secret-key: ${JWT_SECRET_KEY}
+  token:
+    access-expire-time: 1800000000
+    refresh-expire-time: 1209600000

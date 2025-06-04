@@ -29,7 +29,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class JwtAuthorizationFilter implements GatewayFilter {
+public class JwtAuthenticationFilter implements GatewayFilter {
 
     // application.yml에서 JWT 서명 키 값을 주입받음
     @Value("${auth.jwt.key}")
