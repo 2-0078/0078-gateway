@@ -32,7 +32,7 @@ import java.util.List;
 public class JwtAuthenticationFilter implements GatewayFilter {
 
     // application.yml에서 JWT 서명 키 값을 주입받음
-    @Value("${auth.jwt.key}")
+    @Value("${JWT.secret-key}")
     private String keyString;
 
     // JWT 검증에 사용할 SecretKey 객체
@@ -117,10 +117,10 @@ public class JwtAuthenticationFilter implements GatewayFilter {
     // JWT에서 Claims(페이로드) 추출
     private Claims getClaims(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey)
+                .setSigningKey(secretKey)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload();
+                .getBody();
     }
 
     // 에러 응답을 JSON 형태로 반환
@@ -135,7 +135,6 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8));
             return response.writeWith(Flux.just(buffer));
         } catch (Exception e) {
-            // JSON 변환 실패 시 빈 응답 반환
             return response.setComplete();
         }
     }
