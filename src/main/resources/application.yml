@@ -129,6 +129,14 @@ springdoc:
         name: "Product Service API"
       - url: "/board-service/v3/api-docs"
         name: "Board Service API"
+      - url: "/auth-service/v3/api-docs"
+        name: "Auth Service API"
+      - url: "/funding-service/v3/api-docs"
+        name: "Funding Service API"
+      - url: "/piece-service/v3/api-docs"
+        name: "Piece Service API"
+      - url: "/auction-service/v3/api-docs"
+        name: "Auction Service API"
 
 eureka:
   client:
