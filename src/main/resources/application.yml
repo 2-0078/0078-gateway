@@ -5,6 +5,8 @@ server:
 
 # Spring Application 설정
 spring:
+  config:
+    import: optional:dotenv:.env
   main:
     web-application-type: reactive
   application:
