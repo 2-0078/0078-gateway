@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+
 @Slf4j
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
@@ -26,6 +28,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             "/api/v1/find-email",
             "/api/v1/phone/send-code",
             "/api/v1/phone/verify",
+            "/v3/api-docs",
+            "/v3/api-docs/",
+            "/swagger-ui.html",
+            "/swagger-ui/",
+            "/swagger-resources",
+            "/swagger-resources/",
+            "/webjars/"
             // 추가적으로 인증 필요없는 경로들 여기에!
     };
 
@@ -46,8 +55,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
             // 3. 화이트리스트 검사
             for (String whitePath : WHITE_LIST) {
-                if (path.startsWith(whitePath)) {
-                    // 인증 검사 없이 바로 다음 필터로 넘김
+                if (Arrays.stream(WHITE_LIST).anyMatch(path::startsWith)) {
                     return chain.filter(exchange);
                 }
             }
