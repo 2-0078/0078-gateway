@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,57 +13,49 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Date;
+import java.util.function.Function;
 
-@Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class JwtProvider {
 
-    private SecretKey secretKey;
+    @Value("${JWT.secret-key}")
+    private String secretKey;
 
-    public JwtProvider(Environment env) {
-        String secret = env.getProperty("JWT.secret-key");
+    private Key key;
 
-        if (secret == null || secret.isBlank()) {
-            throw new IllegalArgumentException("❗ JWT.secret-key is not set.");
-        }
-
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        log.info("✅ JWT SecretKey loaded successfully.");
+    @PostConstruct
+    public void init() {
+        // jwt secret key를 byte 배열로 변환하여 Key 객체 생성
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    // 유효한 토큰인지 확인
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith((SecretKey) key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    /**
+     * 토큰 유효성 검증 (서명 확인 및 만료 시간 체크)
+     * @param token
+     * @return 유효하면 true, 아니면 false
+     */
     public boolean validateToken(String token) {
         try {
-            parseClaims(token); // 예외 발생 시 catch됨
-            return true;
-        } catch (ExpiredJwtException e) {
-            log.warn("JWT expired: {}", e.getMessage());
-            return false;
+            Claims claims = extractAllClaims(token);
+            return !claims.getExpiration().before(new Date());
         } catch (Exception e) {
-            log.warn("JWT invalid: {}", e.getMessage());
             return false;
         }
-    }
-
-    // 만료 여부
-    public boolean isExpired(Claims claims) {
-        return claims.getExpiration().before(new Date());
-    }
-
-    // 토큰에서 Claims 추출
-    public Claims parseClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    // 토큰에서 memberUuid 추출
-    public String getMemberUuid(String token) {
-        Claims claims = parseClaims(token);
-        return claims.get("memberUuid", String.class);
     }
 }

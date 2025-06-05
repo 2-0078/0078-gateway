@@ -1,94 +1,99 @@
 package com.pieceofcake.gateway.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pieceofcake.gateway.auth.JwtProvider;
-import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
+import com.pieceofcake.gateway.common.exception.BaseResponseStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class JwtAuthenticationFilter implements GatewayFilter {
+public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
     private final JwtProvider jwtProvider;
-    private final ObjectMapper objectMapper;
 
-    private static final String BEARER_PREFIX = "Bearer ";
-    private static final String HEADER_MEMBER_UUID = "X-Member-Uuid";
+    // 1. 화이트리스트 경로를 작성 (startsWith/equals/정규표현식 등 필요에 따라)
+    private static final String[] WHITE_LIST = {
+            "/api/v1/login",
+            "/api/v1/signup",
+            "/api/v1/check-nickname",
+            "/api/v1/check-email",
+            "/api/v1/find-email",
+            "/api/v1/phone/send-code",
+            "/api/v1/phone/verify",
+            // 추가적으로 인증 필요없는 경로들 여기에!
+    };
+
+    public JwtAuthenticationFilter(JwtProvider jwtProvider) {
+        super(Config.class);
+        this.jwtProvider = jwtProvider;
+    }
+
+    public static class Config {
+        // 차후 설정값 입력
+    }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("JWT Authorization Filter");
+    public GatewayFilter apply(Config config) {
+        return (exchange, chain) -> {
+            // 2. 현재 요청 경로 확인
+            String path = exchange.getRequest().getPath().toString();
 
-        try {
-            List<String> authorizationHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION);
-            if (authorizationHeader == null || authorizationHeader.isEmpty()) {
-                return sendError(exchange, 701, "Authorization header is missing");
+            // 3. 화이트리스트 검사
+            for (String whitePath : WHITE_LIST) {
+                if (path.startsWith(whitePath)) {
+                    // 인증 검사 없이 바로 다음 필터로 넘김
+                    return chain.filter(exchange);
+                }
+            }
+            ServerHttpRequest request = exchange.getRequest();
+            String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                return onError(exchange, BaseResponseStatus.WRONG_JWT_TOKEN);
             }
 
-            String bearerToken = authorizationHeader.stream()
-                    .filter(header -> header.startsWith(BEARER_PREFIX))
-                    .findFirst()
-                    .orElse(null);
-
-            if (bearerToken == null) {
-                return sendError(exchange, 702, "Bearer token is missing");
-            }
-
-            String token = bearerToken.substring(BEARER_PREFIX.length());
+            String token = authorizationHeader.replace("Bearer ", "");
 
             if (!jwtProvider.validateToken(token)) {
-                return sendError(exchange, 703, "Invalid or expired JWT token");
+                return onError(exchange, BaseResponseStatus.TOKEN_NOT_VALID);
             }
 
-            Claims claims = jwtProvider.parseClaims(token);
-            String memberUuid = claims.get("memberUuid", String.class);
-            if (memberUuid == null) {
-                return sendError(exchange, 704, "memberUuid is missing in JWT");
-            }
-
-            ServerHttpRequest mutatedRequest = exchange.getRequest()
-                    .mutate()
-                    .header(HEADER_MEMBER_UUID, memberUuid)
+            // 토큰에서 uuid 추출
+            String tokenUuid = jwtProvider.extractClaim(token, claims -> claims.get("uuid", String.class));
+            // X-Member-Uuid 헤더에 추가
+            ServerHttpRequest mutatedRequest = request.mutate()
+                    .header("X-Member-Uuid", tokenUuid)
                     .build();
 
-            return chain.filter(exchange.mutate().request(mutatedRequest).build());
+            // 만약 X-Member-Uuid 헤더가 존재하고, 이걸 토큰의 추출값과 비교하고 싶다면, 위의 코드를 아래코드로 교체
+//            String headerUuid = request.getHeaders().getFirst("X-Member-Uuid");
+//            if (headerUuid == null || !headerUuid.equals(tokenUuid)) {
+//                return onError(exchange, BaseResponseStatus.INVALID_ACCESS_TOKEN);
+//            }
 
-        } catch (Exception e) {
-            log.error("Unexpected JWT error", e);
-            return sendError(exchange, 999, "Unexpected error: " + e.getMessage());
-        }
+            ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+
+            return chain.filter(mutatedExchange);
+        };
     }
 
-    private Mono<Void> sendError(ServerWebExchange exchange, int statusCode, String message) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-
-        try {
-            String body = objectMapper.writeValueAsString(new ErrorResponse(statusCode, message));
-            DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8));
-            return response.writeWith(Flux.just(buffer));
-        } catch (Exception e) {
-            return response.setComplete();
-        }
+    private Mono<Void> onError(ServerWebExchange exchange, BaseResponseStatus status) {
+        exchange.getResponse().setStatusCode(status.getHttpStatusCode());
+        return exchange.getResponse().setComplete();
     }
 
-    private record ErrorResponse(int statusCode, String message) {}
+    private String resolveToken(ServerWebExchange exchange) {
+        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
+    }
+
 }
