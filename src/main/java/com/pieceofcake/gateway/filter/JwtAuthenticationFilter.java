@@ -54,11 +54,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             String path = exchange.getRequest().getPath().toString();
 
             // 3. 화이트리스트 검사
-            for (String whitePath : WHITE_LIST) {
-                if (Arrays.stream(WHITE_LIST).anyMatch(path::startsWith)) {
-                    return chain.filter(exchange);
-                }
+
+            if (Arrays.stream(WHITE_LIST).anyMatch(path::startsWith)) {
+                return chain.filter(exchange);
             }
+
             ServerHttpRequest request = exchange.getRequest();
             String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
