@@ -90,7 +90,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     }
 
     private boolean isSwaggerPath(String path) {
-        return path.contains("/swagger") ||
+        return path.contains("/swagger-ui") ||
                 path.contains("/v3/api-docs") ||
                 path.contains("/webjars");
     }
