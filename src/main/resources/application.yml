@@ -11,6 +11,8 @@ spring:
     web-application-type: reactive
   application:
     name: gateway-service
+  profiles:
+    active: dev
 
   # Spring Cloud Gateway 설정
   cloud:
@@ -151,13 +153,6 @@ springdoc:
         name: "Piece Service API"
       - url: "/auction-service/v3/api-docs"
         name: "Auction Service API"
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${EUREKA_HOST}:8761/eureka/
 
 JWT:
   secret-key: ${JWT_SECRET_KEY}
