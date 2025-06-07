@@ -21,20 +21,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
     // 1. 화이트리스트 경로를 작성 (startsWith/equals/정규표현식 등 필요에 따라)
     private static final String[] WHITE_LIST = {
-            "/api/v1/login",
-            "/api/v1/signup",
-            "/api/v1/check-nickname",
-            "/api/v1/check-email",
-            "/api/v1/find-email",
-            "/api/v1/phone/send-code",
-            "/api/v1/phone/verify",
-            "/v3/api-docs",
-            "/v3/api-docs/",
-            "/swagger-ui.html",
-            "/swagger-ui/",
-            "/swagger-resources",
-            "/swagger-resources/",
-            "/webjars/"
+            "/auth-service/api/v1/login",
+            "/auth-service/api/v1/signup",
+            "/auth-service/api/v1/check-nickname",
+            "/auth-service/api/v1/check-email",
+            "/auth-service/api/v1/find-email",
+            "/auth-service/api/v1/phone/send-code",
+            "/auth-service/api/v1/phone/verify"
             // 추가적으로 인증 필요없는 경로들 여기에!
     };
 
@@ -55,7 +48,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
             // 3. 화이트리스트 검사
 
-            if (Arrays.stream(WHITE_LIST).anyMatch(path::startsWith)) {
+            if (Arrays.stream(WHITE_LIST).anyMatch(path::startsWith) || isSwaggerPath(path) ) {
                 return chain.filter(exchange);
             }
 
@@ -94,6 +87,12 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     private Mono<Void> onError(ServerWebExchange exchange, BaseResponseStatus status) {
         exchange.getResponse().setStatusCode(status.getHttpStatusCode());
         return exchange.getResponse().setComplete();
+    }
+
+    private boolean isSwaggerPath(String path) {
+        return path.contains("/swagger") ||
+                path.contains("/v3/api-docs") ||
+                path.contains("/webjars");
     }
 
     private String resolveToken(ServerWebExchange exchange) {
