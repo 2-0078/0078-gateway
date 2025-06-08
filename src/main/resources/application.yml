@@ -24,6 +24,7 @@ spring:
           '[/**]':
             allowed-origins:
               - "http://localhost:3000"
+              - "http://13.125.94.196:8000"
             allow-credentials: true
             allowed-headers:
               - X-requested-with
