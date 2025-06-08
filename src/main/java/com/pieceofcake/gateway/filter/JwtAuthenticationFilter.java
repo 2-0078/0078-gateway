@@ -65,11 +65,25 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                 return onError(exchange, BaseResponseStatus.TOKEN_NOT_VALID);
             }
 
-            // 토큰에서 uuid 추출
-            String tokenUuid = jwtProvider.extractClaim(token, claims -> claims.get("uuid", String.class));
-            // X-Member-Uuid 헤더에 추가
+//            // 토큰에서 uuid 추출
+//            String tokenUuid = jwtProvider.extractClaim(token, claims -> claims.get("uuid", String.class));
+//            // X-Member-Uuid 헤더에 추가
+//            ServerHttpRequest mutatedRequest = request.mutate()
+//                    .header("X-Member-Uuid", tokenUuid)
+//                    .build();
+
+            // ✅ JwtProvider 내부 로직에 따라 memberUuid를 추출
+            String memberUuid;
+            try {
+                memberUuid = jwtProvider.getMemberUuid(token);
+            } catch (Exception e) {
+                log.warn("JWT에서 memberUuid 추출 실패: {}", e.getMessage());
+                return onError(exchange, BaseResponseStatus.NO_ACCESS_AUTHORITY);
+            }
+
+            // 요청에 X-Member-Uuid 헤더 추가
             ServerHttpRequest mutatedRequest = request.mutate()
-                    .header("X-Member-Uuid", tokenUuid)
+                    .header("X-Member-Uuid", memberUuid)
                     .build();
 
             // 만약 X-Member-Uuid 헤더가 존재하고, 이걸 토큰의 추출값과 비교하고 싶다면, 위의 코드를 아래코드로 교체

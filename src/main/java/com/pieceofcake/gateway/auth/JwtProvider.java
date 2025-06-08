@@ -1,5 +1,7 @@
 package com.pieceofcake.gateway.auth;
 
+import com.pieceofcake.gateway.common.exception.BaseException;
+import com.pieceofcake.gateway.common.exception.BaseResponseStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,34 +17,23 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.Objects;
 import java.util.function.Function;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JwtProvider {
 
-    @Value("${JWT.secret-key}")
-    private String secretKey;
+    private final Environment env;
 
-    private Key key;
+    private SecretKey key;
 
     @PostConstruct
     public void init() {
         // jwt secret key를 byte 배열로 변환하여 Key 객체 생성
-        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
-    public Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith((SecretKey) key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        String secret = Objects.requireNonNull(env.getProperty("JWT.secret-key"));
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     /**
@@ -53,9 +44,36 @@ public class JwtProvider {
     public boolean validateToken(String token) {
         try {
             Claims claims = extractAllClaims(token);
-            return !claims.getExpiration().before(new Date());
+            if (claims.getExpiration().before(new Date())) {
+                log.warn("❌ Token expired at {}", claims.getExpiration());
+                return false;
+            }
+            return true;
         } catch (Exception e) {
+            log.warn("❌ Invalid token: {}", e.getMessage());
             return false;
         }
+    }
+
+    public String getMemberUuid(String token) {
+        Claims claims = extractAllClaims(token);
+        String memberUuid = claims.get("memberUuid", String.class);
+        if (memberUuid == null) {
+            throw new BaseException(BaseResponseStatus.NO_ACCESS_AUTHORITY);
+        }
+        return memberUuid;
+    }
+
+//    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+//        Claims claims = extractAllClaims(token);
+//        return claimsResolver.apply(claims);
+//    }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
