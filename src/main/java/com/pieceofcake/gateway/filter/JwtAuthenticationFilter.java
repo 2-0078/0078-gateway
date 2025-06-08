@@ -21,13 +21,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
     // 1. 화이트리스트 경로를 작성 (startsWith/equals/정규표현식 등 필요에 따라)
     private static final String[] WHITE_LIST = {
-            "/auth-service/api/v1/login",
-            "/auth-service/api/v1/signup",
-            "/auth-service/api/v1/check-nickname",
-            "/auth-service/api/v1/check-email",
-            "/auth-service/api/v1/find-email",
-            "/auth-service/api/v1/phone/send-code",
-            "/auth-service/api/v1/phone/verify"
+            "/api/v1/login",
+            "/api/v1/signup",
+            "/api/v1/check-nickname",
+            "/api/v1/check-email",
+            "/api/v1/find-email",
+            "/api/v1/phone/send-code",
+            "/api/v1/phone/verify"
             // 추가적으로 인증 필요없는 경로들 여기에!
     };
 
