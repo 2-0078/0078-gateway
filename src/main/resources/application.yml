@@ -56,6 +56,13 @@ spring:
             - StripPrefix=1
             - JwtAuthenticationFilter
 
+        - id: reply-service
+          uri: lb://REPLY-SERVICE
+          predicates:
+            - Path=/reply-service/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
@@ -153,6 +160,8 @@ springdoc:
         name: "Piece Service API"
       - url: "/auction-service/v3/api-docs"
         name: "Auction Service API"
+      - url: "/reply-service/v3/api-docs"
+        name: "Reply Service API"
 
 JWT:
   secret-key: ${JWT_SECRET_KEY}
