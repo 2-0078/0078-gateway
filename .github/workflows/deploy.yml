@@ -3,7 +3,7 @@ name: Deploy Gateway from Docker Hub to EC2
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   build-and-deploy:
@@ -38,6 +38,7 @@ jobs:
         run: |
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
           echo "EUREKA_HOST=${{ secrets.EC2_HOST }}" >> .env
+          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
 
       - name: Build and Push Docker Image to Docker Hub
         uses: docker/build-push-action@v5
@@ -73,7 +74,7 @@ jobs:
             docker compose pull
           
             docker compose down || true
-            docker rm -f gateway_service || true
+            docker rm -f gateway || true
           
             docker compose --env-file .env up -d
           EOF

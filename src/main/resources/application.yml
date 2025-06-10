@@ -5,10 +5,14 @@ server:
 
 # Spring Application 설정
 spring:
+  config:
+    import: optional:file:.env[.properties]
   main:
     web-application-type: reactive
   application:
     name: gateway-service
+  profiles:
+    active: dev
 
   # Spring Cloud Gateway 설정
   cloud:
@@ -20,6 +24,7 @@ spring:
           '[/**]':
             allowed-origins:
               - "http://localhost:3000"
+              - "http://13.125.94.196:8000"
             allow-credentials: true
             allowed-headers:
               - X-requested-with
@@ -42,6 +47,7 @@ spring:
             - Path=/auth-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: board-service
           uri: lb://BOARD-SERVICE
@@ -49,6 +55,15 @@ spring:
             - Path=/board-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
+
+        - id: reply-service
+          uri: lb://REPLY-SERVICE
+          predicates:
+            - Path=/reply-service/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
@@ -56,6 +71,7 @@ spring:
             - Path=/product-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
@@ -63,6 +79,7 @@ spring:
             - Path=/payment-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: admin-service
           uri: lb://ADMIN-SERVICE
@@ -70,6 +87,7 @@ spring:
             - Path=/admin-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: batch-service
           uri: lb://BATCH-SERVICE
@@ -77,6 +95,7 @@ spring:
             - Path=/batch-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: asset-service
           uri: lb://ASSET-SERVICE
@@ -84,6 +103,7 @@ spring:
             - Path=/asset-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: auction-service
           uri: lb://AUCTION-SERVICE
@@ -91,6 +111,7 @@ spring:
             - Path=/auction-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: piece-service
           uri: lb://PIECE-SERVICE
@@ -98,6 +119,7 @@ spring:
             - Path=/piece-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: funding-service
           uri: lb://FUNDING-SERVICE
@@ -105,6 +127,7 @@ spring:
             - Path=/funding-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
         - id: alert-service
           uri: lb://ALERT-SERVICE
@@ -112,6 +135,7 @@ spring:
             - Path=/alert-service/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
       discovery:
         locator:
@@ -124,13 +148,24 @@ springdoc:
     enabled: true
     path: /swagger-ui/index.html
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${EUREKA_HOST}:8761/eureka/
+    urls:
+      - url: "/product-service/v3/api-docs"
+        name: "Product Service API"
+      - url: "/board-service/v3/api-docs"
+        name: "Board Service API"
+      - url: "/auth-service/v3/api-docs"
+        name: "Auth Service API"
+      - url: "/funding-service/v3/api-docs"
+        name: "Funding Service API"
+      - url: "/piece-service/v3/api-docs"
+        name: "Piece Service API"
+      - url: "/auction-service/v3/api-docs"
+        name: "Auction Service API"
+      - url: "/reply-service/v3/api-docs"
+        name: "Reply Service API"
 
-auth:
-  jwt:
-    key: 1bce3fa358ad5f5d89b2ec5d45ab89bb574244593afee33fd5d46f902bc398c4
+JWT:
+  secret-key: ${JWT_SECRET_KEY}
+  token:
+    access-expire-time: 1800000000
+    refresh-expire-time: 1209600000

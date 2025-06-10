@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   gateway:
-    container_name: gateway_service
+    container_name: gateway
     image: ${DOCKER_USERNAME}/gateway:latest
     ports:
       - "8000:8000"
