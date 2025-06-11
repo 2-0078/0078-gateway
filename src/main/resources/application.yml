@@ -163,6 +163,8 @@ springdoc:
         name: "Auction Service API"
       - url: "/reply-service/v3/api-docs"
         name: "Reply Service API"
+      - url: "/payment-service/v3/api-docs"
+        name: "Payment Service API"
 
 JWT:
   secret-key: ${JWT_SECRET_KEY}
