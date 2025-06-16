@@ -73,6 +73,14 @@ spring:
             - StripPrefix=1
             - JwtAuthenticationFilter
 
+        - id: product-read-service
+          uri: lb://PRODUCT-READ-SERVICE
+          predicates:
+            - Path=/product-read-service/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthenticationFilter
+
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
           predicates:
@@ -165,6 +173,8 @@ springdoc:
         name: "Reply Service API"
       - url: "/payment-service/v3/api-docs"
         name: "Payment Service API"
+      - url: "/product-read-service/v3/api-docs"
+        name: "Product Read Service API"
 
 JWT:
   secret-key: ${JWT_SECRET_KEY}
