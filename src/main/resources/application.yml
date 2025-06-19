@@ -49,13 +49,21 @@ spring:
             - StripPrefix=1
             - JwtAuthenticationFilter
 
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
+          predicates:
+            - Path=/member-service/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthenticationFilter
+
         - id: board-service
           uri: lb://BOARD-SERVICE
           predicates:
             - Path=/board-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
 
         - id: reply-service
           uri: lb://REPLY-SERVICE
@@ -63,7 +71,7 @@ spring:
             - Path=/reply-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
@@ -71,7 +79,15 @@ spring:
             - Path=/product-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
+
+        - id: product-read-service
+          uri: lb://PRODUCT-READ-SERVICE
+          predicates:
+            - Path=/product-read-service/**
+          filters:
+            - StripPrefix=1
+#            - JwtAuthenticationFilter
 
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
@@ -79,7 +95,7 @@ spring:
             - Path=/payment-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
 
         - id: admin-service
           uri: lb://ADMIN-SERVICE
@@ -87,7 +103,7 @@ spring:
             - Path=/admin-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
 
         - id: batch-service
           uri: lb://BATCH-SERVICE
@@ -95,7 +111,7 @@ spring:
             - Path=/batch-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
 
         - id: asset-service
           uri: lb://ASSET-SERVICE
@@ -103,7 +119,7 @@ spring:
             - Path=/asset-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
 
         - id: auction-service
           uri: lb://AUCTION-SERVICE
@@ -119,7 +135,7 @@ spring:
             - Path=/piece-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
 
         - id: funding-service
           uri: lb://FUNDING-SERVICE
@@ -127,7 +143,7 @@ spring:
             - Path=/funding-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
 
         - id: alert-service
           uri: lb://ALERT-SERVICE
@@ -135,7 +151,7 @@ spring:
             - Path=/alert-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+#            - JwtAuthenticationFilter
 
       discovery:
         locator:
@@ -155,6 +171,8 @@ springdoc:
         name: "Board Service API"
       - url: "/auth-service/v3/api-docs"
         name: "Auth Service API"
+      - url: "/member-service/v3/api-docs"
+        name: "Member Service API"
       - url: "/funding-service/v3/api-docs"
         name: "Funding Service API"
       - url: "/piece-service/v3/api-docs"
@@ -163,6 +181,10 @@ springdoc:
         name: "Auction Service API"
       - url: "/reply-service/v3/api-docs"
         name: "Reply Service API"
+      - url: "/payment-service/v3/api-docs"
+        name: "Payment Service API"
+      - url: "/product-read-service/v3/api-docs"
+        name: "Product Read Service API"
 
 JWT:
   secret-key: ${JWT_SECRET_KEY}
