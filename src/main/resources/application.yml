@@ -49,6 +49,14 @@ spring:
             - StripPrefix=1
             - JwtAuthenticationFilter
 
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
+          predicates:
+            - Path=/member-service/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthenticationFilter
+
         - id: board-service
           uri: lb://BOARD-SERVICE
           predicates:
@@ -119,7 +127,7 @@ spring:
             - Path=/auction-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: piece-service
           uri: lb://PIECE-SERVICE
@@ -163,6 +171,8 @@ springdoc:
         name: "Board Service API"
       - url: "/auth-service/v3/api-docs"
         name: "Auth Service API"
+      - url: "/member-service/v3/api-docs"
+        name: "Member Service API"
       - url: "/funding-service/v3/api-docs"
         name: "Funding Service API"
       - url: "/piece-service/v3/api-docs"
