@@ -27,7 +27,8 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             "/api/v1/check-email",
             "/api/v1/find-email",
             "/api/v1/phone/send-code",
-            "/api/v1/phone/verify"
+            "/api/v1/phone/verify",
+            "/api/v1/money/with-member-uuid"
             // 추가적으로 인증 필요없는 경로들 여기에!
     };
 
