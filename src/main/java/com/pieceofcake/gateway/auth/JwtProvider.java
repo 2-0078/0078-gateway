@@ -64,6 +64,14 @@ public class JwtProvider {
         return memberUuid;
     }
 
+    public String getMemberRole(String token) {
+        Claims claims = extractAllClaims(token);
+        String role = claims.get("role", String.class); // roles가 String이라면
+        if (role == null) {
+            throw new BaseException(BaseResponseStatus.NO_ACCESS_AUTHORITY);
+        }
+        return role;
+    }
 //    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
 //        Claims claims = extractAllClaims(token);
 //        return claimsResolver.apply(claims);
