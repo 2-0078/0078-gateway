@@ -185,6 +185,8 @@ springdoc:
         name: "Payment Service API"
       - url: "/product-read-service/v3/api-docs"
         name: "Product Read Service API"
+      - url: "/batch-service/v3/api-docs"
+        name: "Batch Service API"
 
 JWT:
   secret-key: ${JWT_SECRET_KEY}
