@@ -74,8 +74,10 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
             // ✅ JwtProvider 내부 로직에 따라 memberUuid를 추출
             String memberUuid;
+            String memberRole;
             try {
                 memberUuid = jwtProvider.getMemberUuid(token);
+                memberRole = jwtProvider.getMemberRole(token); // ✅ ROLE 추출
             } catch (Exception e) {
                 log.warn("JWT에서 memberUuid 추출 실패: {}", e.getMessage());
                 return onError(exchange, BaseResponseStatus.NO_ACCESS_AUTHORITY);
@@ -84,6 +86,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             // 요청에 X-Member-Uuid 헤더 추가
             ServerHttpRequest mutatedRequest = request.mutate()
                     .header("X-Member-Uuid", memberUuid)
+                    .header("X-Member-Role", memberRole) // ✅ 역할 추가
                     .build();
 
             // 만약 X-Member-Uuid 헤더가 존재하고, 이걸 토큰의 추출값과 비교하고 싶다면, 위의 코드를 아래코드로 교체
