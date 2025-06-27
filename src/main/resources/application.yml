@@ -1,9 +1,7 @@
-# 서버 설정
 server:
   port: 8000
   forward-headers-strategy: framework
 
-# Spring Application 설정
 spring:
   config:
     import: optional:file:.env[.properties]
@@ -14,7 +12,6 @@ spring:
   profiles:
     active: dev
 
-  # Spring Cloud Gateway 설정
   cloud:
     gateway:
       default-filters:
@@ -166,7 +163,7 @@ spring:
 
 springdoc:
   api-docs:
-    path: /v3/api-docs  # API 문서 경로
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
     path: /swagger-ui/index.html

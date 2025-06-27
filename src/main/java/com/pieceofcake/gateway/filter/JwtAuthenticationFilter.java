@@ -19,18 +19,69 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
     private final JwtProvider jwtProvider;
 
-    // 1. 화이트리스트 경로를 작성 (startsWith/equals/정규표현식 등 필요에 따라)
     private static final String[] WHITE_LIST = {
             "/api/v1/login",
             "/api/v1/signup",
+            "/api/v1/reset-password",
             "/api/v1/check-nickname",
             "/api/v1/check-email",
             "/api/v1/find-email",
             "/api/v1/phone/send-code",
             "/api/v1/phone/verify",
+
+            "/api/v1/piece/product/uuid-list",
+            "/api/v1/piece/product",
+            "/api/v1/piece/product/{pieceProductUuid}",
+            "/api/v1/piece",
+            "/api/v1/piece/delete-all/{productUuid}",
+            "/api/v1/piece/owned/{pieceProductUuid}/list",
+
+            "/api/v1/participation/remain/{fundingUuid}",
+
+            "/api/v1/reply/child/{parentReplyUuid}",
+            "/api/v1/reply/list/{boardType}/{boardUuid}",
+            "/api/v1/reply/community/{replyUuid}",
+
             "/api/v1/money/with-member-uuid",
-            "/api/v1/profile-image"
-            // 추가적으로 인증 필요없는 경로들 여기에!
+            "/api/v1/brandpay/callback",
+
+            "/api/v1/vote",
+            "/api/v1/bid/list/{auctionUuid}",
+            "/api/v1/auction",
+            "/api/v1/auction/sse/price-updates/{auctionUuid}",
+            "/api/v1/auction/highest-price/{auctionUuid}",
+
+            "/api/v1/piece/graph/real-time/{pieceProductUuid}",
+
+            "/api/v1/board/notice",
+            "/api/v1/board/notice/{boardUuid}",
+            "/api/v1/board/faq",
+            "/api/v1/board/faq/{boardUuid}",
+            "/api/v1/board/event",
+            "/api/v1/board/event/{boardUuid}",
+            "/api/v1/board/community",
+
+            "/api/v1/product/list",
+            "/api/v1/product/list/{productUuid}",
+            "/api/v1/piece/list",
+            "/api/v1/piece/list/{pieceProductUuid}",
+            "/api/v1/funding/list",
+            "/api/v1/funding/list/{fundingUuid}",
+
+            "/api/v1/sub-category",
+            "/api/v1/sub-category/{subCategoryId}",
+            "/api/v1/sub-category/list",
+            "/api/v1/sub-category/list/{mainCategoryId}",
+            "/api/v1/product",
+            "/api/v1/product/{productUuid}",
+            "/api/v1/main-category",
+            "/api/v1/main-category/{mainCategoryId}",
+            "/api/v1/main-category/list",
+            "/api/v1/price",
+
+            "/stock",
+            "/api/v1/kis-api/quotes/{pieceProductUuid}",
+            "/api/v1/kis-api/market-price/{pieceProductUuid}"
     };
 
     public JwtAuthenticationFilter(JwtProvider jwtProvider) {
