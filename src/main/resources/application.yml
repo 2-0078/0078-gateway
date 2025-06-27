@@ -63,7 +63,7 @@ spring:
             - Path=/board-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: reply-service
           uri: lb://REPLY-SERVICE
@@ -71,7 +71,7 @@ spring:
             - Path=/reply-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
@@ -79,7 +79,7 @@ spring:
             - Path=/product-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: product-read-service
           uri: lb://PRODUCT-READ-SERVICE
@@ -87,7 +87,7 @@ spring:
             - Path=/product-read-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
@@ -95,7 +95,7 @@ spring:
             - Path=/payment-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: admin-service
           uri: lb://ADMIN-SERVICE
@@ -103,7 +103,7 @@ spring:
             - Path=/admin-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: batch-service
           uri: lb://BATCH-SERVICE
@@ -111,7 +111,7 @@ spring:
             - Path=/batch-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: asset-service
           uri: lb://ASSET-SERVICE
@@ -119,7 +119,7 @@ spring:
             - Path=/asset-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: auction-service
           uri: lb://AUCTION-SERVICE
@@ -135,7 +135,7 @@ spring:
             - Path=/piece-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: funding-service
           uri: lb://FUNDING-SERVICE
@@ -143,7 +143,7 @@ spring:
             - Path=/funding-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
         - id: alert-service
           uri: lb://ALERT-SERVICE
@@ -151,14 +151,14 @@ spring:
             - Path=/alert-service/**
           filters:
             - StripPrefix=1
-#            - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
         - id: real-time-data-service
           uri: lb://REAL-TIME-DATA-SERVICE
           predicates:
             - Path=/real-time-data-service/**
           filters:
             - StripPrefix=1
-#           - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
 
       discovery:
         locator:
