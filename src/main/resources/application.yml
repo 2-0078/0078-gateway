@@ -155,17 +155,6 @@ spring:
           filters:
             - StripPrefix=1
 
-        - id: real-time-data-service-ws
-          uri: lb://REAL-TIME-DATA-SERVICE
-          predicates:
-            - Path=/ws/real-time/**
-          filters:
-            - name: RewritePath
-              args:
-                regexp: '/ws/real-time/(?<segment>.*)'
-                replacement: '/ws/real-time/${segment}'
-            - name: PreserveHostHeader
-
       discovery:
         locator:
           enabled: true
