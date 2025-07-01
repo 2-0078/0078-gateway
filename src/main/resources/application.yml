@@ -162,6 +162,7 @@ spring:
           predicates:
             - Path=/ws/real-time/**
           filters:
+            - StripPrefix=1
             - name: RewritePath
               args:
                 regexp: '/ws/real-time/(?<segment>.*)'
