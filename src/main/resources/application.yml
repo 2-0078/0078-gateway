@@ -76,7 +76,6 @@ spring:
             - Path=/product-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
 
         - id: product-read-service
           uri: lb://PRODUCT-READ-SERVICE
@@ -84,7 +83,6 @@ spring:
             - Path=/product-read-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
 
         - id: payment-service
           uri: lb://PAYMENT-SERVICE

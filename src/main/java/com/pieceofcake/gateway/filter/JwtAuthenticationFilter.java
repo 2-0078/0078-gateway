@@ -10,6 +10,8 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import org.springframework.util.AntPathMatcher;
+
 
 import java.util.Arrays;
 
@@ -18,60 +20,64 @@ import java.util.Arrays;
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
     private final JwtProvider jwtProvider;
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private static final String[] WHITE_LIST = {
-            "/api/v1/login",
-            "/api/v1/signup",
-            "/api/v1/reset-password",
-            "/api/v1/check-nickname",
-            "/api/v1/check-email",
-            "/api/v1/find-email",
-            "/api/v1/phone/send-code",
-            "/api/v1/phone/verify",
-            "/api/v1/profile-image",
+            "/auth-service/api/v1/signup",
+            "/auth-service/api/v1/reset-password",
+            "/auth-service/api/v1/logout",
+            "/auth-service/api/v1/login",
+            "/auth-service/api/v1/phone/verify",
+            "/auth-service/api/v1/phone/send-code",
 
-            "/api/v1/piece/product/uuid-list",
-            "/api/v1/piece/product",
-            "/api/v1/piece",
-            "/api/v1/piece/delete-all/",
-            "/api/v1/piece/owned/",
+            "/member-service/api/v1/profile-image",
+            "/member-service/api/v1/find-email",
+            "/member-service/api/v1/check-nickname",
+            "/member-service/api/v1/check-email",
 
-            "/api/v1/participation/remain/",
+            "/piece-service/api/v1/piece/product",
+            "/piece-service/api/v1/piece/product/uuid-list",
+            "/piece-service/api/v1/piece/product/market-price/{pieceProductUuid}",
+            "/piece-service/api/v1/piece/product/{pieceProductUuid}",
+            "/piece-service/api/v1/piece",
+            "/piece-service/api/v1/piece/delete-all/{pieceProductUuid}",
+            "/piece-service/api/v1/piece/owned/{pieceProductUuid}/list",
 
-            "/api/v1/reply/child/",
-            "/api/v1/reply/list/",
-            "/api/v1/reply/community/",
+            "/funding-service/api/v1/funding/{fundingUuid}",
+            "/funding-service/api/v1/funding/list",
+            "/funding-service/api/v1/funding/all",
+            "/funding-service/api/v1/funding/all/{status}",
+            "/funding-service/api/v1/participation/remain/{fundingUuid}",
 
-            "/api/v1/money/with-member-uuid",
-            "/api/v1/brandpay/callback",
+            "/reply-service/api/v1/reply/child/{parentReplyUuid}",
+            "/reply-service/api/v1/reply/list/{boardType}/{boardUuid}",
+            "/reply-service/api/v1/reply/community/{replyUuid}",
 
-            "/api/v1/vote",
-            "/api/v1/bid/list/",
-            "/api/v1/auction",
-            "/api/v1/auction/sse/price-updates/",
-            "/api/v1/auction/highest-price/",
+            "/payment-service/api/v1/money/with-member-uuid",
+            "/payment-service/api/v1/brandpay/callback",
 
-            "/api/v1/piece/graph/real-time/",
+            "/auction-service/api/v1/vote",
+            "/auction-service/api/v1/bid/list",
+            "/auction-service/api/v1/auction/{auctionUuid}",
+            "/auction-service/api/v1/auction",
+            "/auction-service/api/v1/auction/sse/price-updates/{auctionUuid}",
+            "/auction-service/api/v1/auction/list",
+            "/auction-service/api/v1/auction/highest-price/{auctionUuid}",
 
-            "/api/v1/board/notice",
-            "/api/v1/board/faq",
-            "/api/v1/board/event",
-            "/api/v1/board/community",
+            "/batch-service/api/v1/piece/graph/yearly/{pieceProductUuid}",
+            "/batch-service/api/v1/piece/graph/real-time/{pieceProductUuid}",
+            "/batch-service/api/v1/piece/graph/monthly/{pieceProductUuid}",
+            "/batch-service/api/v1/piece/graph/daily/{pieceProductUuid}",
+            "/batch-service/api/v1/best",
 
-            "/api/v1/product/list",
-            "/api/v1/piece/list",
-            "/api/v1/funding/list",
-
-            "/api/v1/sub-category",
-            "/api/v1/sub-category/list",
-            "/api/v1/product",
-            "/api/v1/main-category",
-            "/api/v1/main-category/list",
-            "/api/v1/price",
-
-            "/stock",
-            "/api/v1/kis-api/quotes/",
-            "/api/v1/kis-api/market-price/"
+            "/board-service/api/v1/price",
+            "/board-service/api/v1/board/notice",
+            "/board-service/api/v1/board/notice/{boardUuid}",
+            "/board-service/api/v1/board/faq",
+            "/board-service/api/v1/board/faq/{boardUuid}",
+            "/board-service/api/v1/board/event",
+            "/board-service/api/v1/board/event/{boardUuid}",
+            "/board-service/api/v1/board/community"
     };
 
     public JwtAuthenticationFilter(JwtProvider jwtProvider) {
@@ -91,7 +97,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
             // 3. 화이트리스트 검사
 
-            if (Arrays.stream(WHITE_LIST).anyMatch(path::startsWith) || isSwaggerPath(path) ) {
+            if (Arrays.stream(WHITE_LIST).anyMatch(pattern -> pathMatcher.match(pattern, path)) || isSwaggerPath(path)) {
                 return chain.filter(exchange);
             }
 
