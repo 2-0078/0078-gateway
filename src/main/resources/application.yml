@@ -149,6 +149,7 @@ spring:
           filters:
             - StripPrefix=1
             - JwtAuthenticationFilter
+
         - id: real-time-data-service
           uri: lb://REAL-TIME-DATA-SERVICE
           predicates:
@@ -156,6 +157,11 @@ spring:
           filters:
             - StripPrefix=1
             - JwtAuthenticationFilter
+
+        - id: real-time-ws
+          uri: lb:ws://REAL-TIME-DATA-SERVICE
+          predicates:
+            - Path=/ws/stocks
 
       discovery:
         locator:
