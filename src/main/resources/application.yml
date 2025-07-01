@@ -156,12 +156,13 @@ spring:
             - Path=/real-time-data-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
 
-        - id: real-time-ws
-          uri: lb:ws://REAL-TIME-DATA-SERVICE
+        - id: real-time-data-service-ws
+          uri: lb://REAL-TIME-DATA-SERVICE
           predicates:
-            - Path=/ws/stocks
+            - Path=/ws/real-time/**
+          filters:
+            - RewritePath=/ws/real-time/(?<segment>.*), /ws/real-time/${segment}
 
       discovery:
         locator:
