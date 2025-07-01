@@ -162,7 +162,11 @@ spring:
           predicates:
             - Path=/ws/real-time/**
           filters:
-            - RewritePath=/ws/real-time/(?<segment>.*), /ws/real-time/${segment}
+            - name: RewritePath
+              args:
+                regexp: '/ws/real-time/(?<segment>.*)'
+                replacement: '/ws/real-time/${segment}'
+            - name: PreserveHostHeader
 
       discovery:
         locator:
