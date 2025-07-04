@@ -191,7 +191,7 @@ springdoc:
         name: "Batch Service API"
       - url: "/real-time-data-service/v3/api-docs"
         name: "Real Time Data Service API"
-      - url: "/alert-service/v2/api-docs"
+      - url: "/alert-service/v3/api-docs"
         name: "Alert Service API"
 
 JWT:
