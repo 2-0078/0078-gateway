@@ -42,10 +42,10 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             "/api/v1/piece",
             "/api/v1/piece/delete-all/{pieceProductUuid}",
             "/api/v1/piece/owned/{pieceProductUuid}/list",
-            "/api/v1/piece/sse/quotes-update/{pieceProductUuid}",
-            "/api/v1/piece/sse/market-price-update/{pieceProductUuid}",
+            "/api/v1/piece/sse/quotes-update/**",
+            "/api/v1/piece/sse/market-price-update/**",
 
-            "//api/v1/funding/{fundingUuid}",
+            "/api/v1/funding/{fundingUuid}",
             "/api/v1/funding/list",
             "/api/v1/funding/all",
             "/api/v1/funding/all/{status}",
