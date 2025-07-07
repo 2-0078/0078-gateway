@@ -146,7 +146,6 @@ spring:
             - Path=/alert-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
 
         - id: real-time-data-service
           uri: lb://REAL-TIME-DATA-SERVICE
