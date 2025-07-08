@@ -34,6 +34,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             "/api/v1/find-email",
             "/api/v1/check-nickname",
             "/api/v1/check-email",
+            "/api/v1/check-phone-number",
 
             "/api/v1/piece/product",
             "/api/v1/piece/product/uuid-list",
