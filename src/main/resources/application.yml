@@ -146,6 +146,21 @@ spring:
             - Path=/alert-service/**
           filters:
             - StripPrefix=1
+            - name: RemoveResponseHeader
+              args:
+                name: Transfer-Encoding
+            - name: AddResponseHeader
+              args:
+                name: Content-Type
+                value: text/event-stream;charset=UTF-8
+            - name: AddResponseHeader
+              args:
+                name: Cache-Control
+                value: no-cache
+            - name: AddResponseHeader
+              args:
+                name: Connection
+                value: keep-alive
 
         - id: real-time-data-service
           uri: lb://REAL-TIME-DATA-SERVICE
