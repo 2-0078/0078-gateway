@@ -153,6 +153,17 @@ spring:
             - Path=/real-time-data-service/**
           filters:
             - StripPrefix=1
+            - name: RemoveResponseHeader
+              args:
+                name: Transfer-Encoding
+            - name: AddResponseHeader
+              args:
+                name: Content-Type
+                value: text/event-stream;charset=UTF-8
+            - name: AddResponseHeader
+              args:
+                name: Cache-Control
+                value: no-cache
 
       discovery:
         locator:
